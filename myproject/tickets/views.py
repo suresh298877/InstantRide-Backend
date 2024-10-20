@@ -12,7 +12,10 @@ class ApiListCreateTickets(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
-        tickets = models.Ticket.objects.all().order_by('-uploaded_at')
+        pk = request.query_params.get('pk')
+        print(pk)
+        tickets = models.Ticket.objects.all().order_by(
+            '-uploaded_at') if not pk else models.Ticket.objects.filter(user=pk).order_by('-uploaded_at')
         serializer = serializers.ListCreateTicketsSerializer(
             tickets, many=True)
         return Response(serializer.data)
